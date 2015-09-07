@@ -1,9 +1,11 @@
 #include <boost/python.hpp>
 #include <libconfig.h++>
 #include <string>
+#include <iostream>
 
 using namespace boost::python;
 using namespace libconfig;
+using namespace std;
 
 class pyConfig
 {
@@ -110,6 +112,19 @@ public:
             return result;
         }
     }
+
+		std::string stringLookup(const char* value)
+		{
+			try
+			{
+				return config->lookup(value);
+			}
+			catch(const SettingNotFoundException &nfex)
+			{
+				std::cerr << "Something is wrong" << std::endl;
+				return (std::string) "";
+			}
+		}
 
     void remove ( const char * path, const char * name )
     {
@@ -239,5 +254,6 @@ BOOST_PYTHON_MODULE ( pylibconfig )
         .def("setValue", &pyConfig::setValue_int )
         .def("setValue", &pyConfig::setValue_str )
         .def("appendToList", &pyConfig::appendToList )
+				.def("stringLookup" , &pyConfig::stringLookup)
     ;
 }
